@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.example.googleplay.R;
+import com.example.googleplay.ui.fragment.FragmentFactory;
 import com.example.googleplay.ui.view.PagerTab;
 import com.example.googleplay.utils.UIUtils;
 
@@ -50,8 +51,9 @@ public class MainActivity extends BaseActivity {
 		}
 		
 		@Override
-		public Fragment getItem(int arg0) {
-			return null;
+		public Fragment getItem(int position) {
+			Fragment fragment = FragmentFactory.createFragment(position);
+			return fragment;
 		}
 
 		@Override
