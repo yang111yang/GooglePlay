@@ -3,36 +3,36 @@ package com.example.googleplay.ui.fragment;
 import java.util.HashMap;
 
 import android.support.v4.app.Fragment;
+import android.view.View;
 
 public class FragmentFactory {
 	
 	private static HashMap<Integer, BaseFragment> mFragmentMap = new HashMap<Integer, BaseFragment>();
 	
-	@SuppressWarnings("unused")
-	public static Fragment createFragment(int pos){
+	public static BaseFragment createFragment(int pos){
 		
-		BaseFragment fragment = new BaseFragment();
+		BaseFragment fragment = mFragmentMap.get(pos);
 		if (fragment == null) {
 			switch (pos) {
-			case 1:
+			case 0:
 				fragment = new HomeFragment();
 				break;
-			case 2:
+			case 1:
 				fragment = new AppFragment();
 				break;
-			case 3:
+			case 2:
 				fragment = new GameFragment();
 				break;
-			case 4:
+			case 3:
 				fragment = new SubjectFragment();
 				break;
-			case 5:
+			case 4:
 				fragment = new RecommendFragment();
 				break;
-			case 6:
+			case 5:
 				fragment = new CategoryFragment();
 				break;
-			case 7:
+			case 6:
 				fragment = new HotFragment();
 				break;
 				

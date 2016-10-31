@@ -44,8 +44,8 @@ public class UIUtils {
 		return getContext().getResources().getColor(id);
 	}
 	// 获取id对应的颜色选择器
-	public static ColorStateList getColorStateList(int mTabTextColorResId) {
-		return null;
+	public static ColorStateList getColorStateList(int id) {
+		return getContext().getResources().getColorStateList(id);
 	}
 
 	// 获取尺寸
