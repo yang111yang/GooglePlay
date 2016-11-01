@@ -50,7 +50,7 @@ public class PagerTab extends ViewGroup {
 
 	private int mTabPadding = 24;// tab左右的内边距
 	private int mTabTextSize = 16; //tab文字大小
-	private int mTabBackgroundResId = R.drawable.bg_tab_text;// tab背景资源
+	private int mTabBackgroundResId = R.drawable.bg_tab_text_selector;// tab背景资源
 	private int mTabTextColorResId = R.color.tab_text_color; //tab文字颜色
 	private int mTabCount;//tab的个数
 

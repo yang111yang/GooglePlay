@@ -1,5 +1,7 @@
 package com.example.googleplay.ui.fragment;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -57,4 +59,24 @@ public abstract class BaseFragment extends Fragment {
 			mLoadingPage.loadData();
 		}
 	}
+	
+	/**
+	 * 对返回网络数据的合法性进行校验
+	 * @param obj  返回网络数据
+	 * @return	
+	 */
+	public ResultState check(Object obj){
+		if (obj != null) {
+			if (obj instanceof ArrayList) {
+				ArrayList list = (ArrayList) obj;
+				if (list.isEmpty()) {
+					return ResultState.STATE_EMPTY;
+				} else {
+					return ResultState.STATE_SUCCESS;
+				}
+			}
+		}
+		return ResultState.STATE_ERROR;
+	}
+	
 }

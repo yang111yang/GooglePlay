@@ -3,12 +3,14 @@ package com.example.googleplay.ui.fragment;
 import java.util.ArrayList;
 
 import android.view.View;
-import android.widget.ListView;
 
+import com.example.googleplay.domain.AppInfo;
+import com.example.googleplay.http.protocol.HomeProtocol;
 import com.example.googleplay.ui.adapter.MyBaseAdapter;
 import com.example.googleplay.ui.holder.BaseHolder;
 import com.example.googleplay.ui.holder.HomeHolder;
 import com.example.googleplay.ui.view.LoadingPage.ResultState;
+import com.example.googleplay.ui.view.MyListView;
 import com.example.googleplay.utils.UIUtils;
 
 /**
@@ -18,36 +20,64 @@ import com.example.googleplay.utils.UIUtils;
  */
 public class HomeFragment extends BaseFragment {
 	
-	private ArrayList<String> data;
+	private ArrayList<AppInfo> data;
 
 	@Override
 	public View onCreateSuccessView() {
 //		TextView textView = new TextView(UIUtils.getContext());
 //		textView.setText(getClass().getSimpleName());
-		ListView view = new ListView(UIUtils.getContext());
+		MyListView view = new MyListView(UIUtils.getContext());
+		
 		view.setAdapter(new HomeAdapter(data));
 		return view;
 	}
 
+	/**
+	 * 运行在子线程，可以直接执行耗时的网络操作
+	 */
 	@Override
 	public ResultState onLoad() {
-		data = new ArrayList<String>();
-		for (int i = 0; i < 20; i++) {
-			data.add("测试数据" + i);
-		}
-		return ResultState.STATE_SUCCESS;
+//		data = new ArrayList<String>();
+//		for (int i = 0; i < 20; i++) {
+//			data.add("测试数据" + i);
+//		}
+		HomeProtocol homeProtocol = new HomeProtocol();
+		data = homeProtocol.getData(0);
+		return check(data); // 校验数据并返回
 	}
 	
-	class HomeAdapter extends MyBaseAdapter<String> {
+	
+	class HomeAdapter extends MyBaseAdapter<AppInfo> {
 
-		public HomeAdapter(ArrayList<String> data) {
+		public HomeAdapter(ArrayList<AppInfo> data) {
 			super(data);
 		}
 
 		@Override
-		public BaseHolder<String> getHolder() {
+		public BaseHolder<AppInfo> getHolder() {
 			return new HomeHolder();
 		}
+
+		/**
+		 * 运行在子线程，可以直接执行耗时的网络操作
+		 */
+		@Override
+		public ArrayList<AppInfo> onLoadMore() {
+//			ArrayList<String> moreData = new ArrayList<String>();
+//			for (int i = 0; i < 20; i++) {
+//				moreData.add("测试更多数据" + i);
+//			}
+//			SystemClock.sleep(2000);
+			
+			HomeProtocol homeProtocol = new HomeProtocol();
+			ArrayList<AppInfo> moreData = homeProtocol.getData(getListSize());
+			return moreData;
+		}
+		
+//		@Override
+//		public boolean hasMore() {
+//			return false;
+//		}
 
 //		@Override
 //		public View getView(int position, View convertView, ViewGroup parent) {
