@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.googleplay.domain.AppInfo;
+import com.example.googleplay.utils.LogUtils;
 
 /**
  * 首页网络请求
@@ -14,6 +15,8 @@ import com.example.googleplay.domain.AppInfo;
  *
  */
 public class HomeProtocol extends BaseProtocol<ArrayList<AppInfo>> {
+
+	private ArrayList<String> mPictures;
 
 	@Override
 	public String getKey() {
@@ -48,10 +51,11 @@ public class HomeProtocol extends BaseProtocol<ArrayList<AppInfo>> {
 			
 			// 解析轮播图数据
 			JSONArray ja1 = jo.getJSONArray("picture");
-			ArrayList<String> pictures = new ArrayList<String>();
+			LogUtils.i("ja1 = " + ja1);
+			mPictures = new ArrayList<String>();
 			for (int i = 0; i < ja1.length(); i++) {
 				String pic = ja1.getString(i);
-				pictures.add(pic);
+				mPictures.add(pic);
 			}
 			
 			return appInfoList;
@@ -60,6 +64,10 @@ public class HomeProtocol extends BaseProtocol<ArrayList<AppInfo>> {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public ArrayList<String> getPictureList(){
+		return mPictures;
 	}
 
 }

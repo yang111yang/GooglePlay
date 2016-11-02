@@ -6,13 +6,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="lib" path="/android-support-v7-appcompat/libs/android-support-v4.jar"/>
-	<classpathentry kind="lib" path="E:/Software/Tools/adt-bundle-windows-x86_64-20140702/sdk/platforms/android-16/android.jar" sourcepath="E:/Software/Tools/adt-bundle-windows-x86_64-20140702/sdk/sources/android-16">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/E:/Software/Tools/adt-bundle-windows-x86_64-20140702/sdk/docs/reference"/>
-		</attributes>
-		<accessrules>
-			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
-		</accessrules>
-	</classpathentry>
+	<classpathentry kind="lib" path="E:/androidsdk/adt-bundle-windows-x86_64-20140702/sdk/platforms/android-16/android.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
