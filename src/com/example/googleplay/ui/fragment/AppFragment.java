@@ -44,7 +44,7 @@ public class AppFragment extends BaseFragment {
 		}
 
 		@Override
-		public BaseHolder<AppInfo> getHolder() {
+		public BaseHolder<AppInfo> getHolder(int position) {
 			return new AppHolder();
 		}
 

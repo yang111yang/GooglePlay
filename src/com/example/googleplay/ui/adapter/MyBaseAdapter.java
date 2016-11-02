@@ -13,17 +13,18 @@ import com.example.googleplay.utils.UIUtils;
 
 /**
  * 对Adapter的封装
+ * 
  * @author Administrator
- *
+ * 
  * @param <T>
  */
 public abstract class MyBaseAdapter<T> extends BaseAdapter {
 
-	/** 正常布局类型 ，注意此时必须从0开始*/
-	private static final int TYPE_NORMAL = 0;
+	/** 正常布局类型 ，注意此时必须从0开始 */
+	private static final int TYPE_NORMAL = 1;
 
 	/** 加载更多布局类型 */
-	private static final int TYPE_MORE = 1;
+	private static final int TYPE_MORE = 0;
 
 	private ArrayList<T> data;
 
@@ -48,7 +49,7 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
 		if (position == getCount() - 1) {
 			return TYPE_MORE; // 返回的是加载更多的布局
 		} else {
-			return getInnerType();
+			return getInnerType(position);
 		}
 	}
 
@@ -57,7 +58,7 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
 	 * 
 	 * @return 默认返回的是普通的布局类型
 	 */
-	public int getInnerType() {
+	public int getInnerType(int position) {
 		return TYPE_NORMAL;
 	}
 
@@ -85,7 +86,7 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
 				holder = (BaseHolder<T>) new MoreHolder(hasMore());
 			} else {
 				// 子类返回具体对象
-				holder = getHolder();
+				holder = getHolder(position);
 			}
 		} else {
 			holder = (BaseHolder<T>) convertView.getTag();
@@ -104,44 +105,47 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
 
 	/**
 	 * 是否还有更多数据，此方法可子类可重写
-	 * @return
-	 * 			默认返回true，有更多数据
+	 * 
+	 * @return 默认返回true，有更多数据
 	 */
-	public boolean hasMore(){
+	public boolean hasMore() {
 		return true;
 	}
-	
+
 	/**
 	 * 获取子类返回的具体对象
-	 * @return	子类返回的具体对象
+	 * 
+	 * @return 子类返回的具体对象
 	 */
-	public abstract BaseHolder<T> getHolder();
-	
+	public abstract BaseHolder<T> getHolder(int position);
+
 	/**
 	 * 标记是否正在加载更多
 	 */
 	private boolean isLoadMore = false;
-	
+
 	/**
 	 * 加载更多数据
 	 */
-	public void loadMore(final MoreHolder holder){
+	public void loadMore(final MoreHolder holder) {
 		if (!isLoadMore) {
 			isLoadMore = true;
-			new Thread(){
+			new Thread() {
 				public void run() {
 					final ArrayList<T> moreData = onLoadMore();
 					UIUtils.runOnUIThread(new Runnable() {
-						
+
 						@Override
 						public void run() {
 							if (moreData != null) {
 								// 默认每页有 20条数据，如果少于20条，则没有更多数据了，到最后一页了
-								if (moreData.size()<20) {
+								if (moreData.size() < 20) {
 									holder.setData(MoreHolder.STATE_MORE_NONE);
-									Toast.makeText(UIUtils.getContext(), "没有更多数据了", Toast.LENGTH_SHORT).show();
+									Toast.makeText(UIUtils.getContext(),
+											"没有更多数据了", Toast.LENGTH_SHORT)
+											.show();
 								} else {
-									//有更多数据
+									// 有更多数据
 									holder.setData(MoreHolder.STATE_MORE_MORE);
 								}
 								// 将更多数据追加到当前集合中
@@ -149,30 +153,32 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
 								// 刷新界面
 								MyBaseAdapter.this.notifyDataSetChanged();
 							} else {
-								//加载更多数据失败
+								// 加载更多数据失败
 								holder.setData(MoreHolder.STATE_MORE_ERROR);
 							}
 							isLoadMore = false;
 						}
 					});
-					
+
 				};
 			}.start();
 		}
 	}
-	
+
 	/**
 	 * 加载更多数据
-	 * @return	更多数据的集合
+	 * 
+	 * @return 更多数据的集合
 	 */
 	public abstract ArrayList<T> onLoadMore();
 
 	/**
 	 * 获取当前集合的大小
+	 * 
 	 * @return
 	 */
-	public int getListSize(){
+	public int getListSize() {
 		return data.size();
 	}
-	
+
 }
