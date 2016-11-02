@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import com.example.googleplay.domain.AppInfo;
 
 /**
- * 首页网络数据解析
+ * 首页网络请求
  * @author Administrator
  *
  */

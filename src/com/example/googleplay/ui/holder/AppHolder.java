@@ -14,11 +14,11 @@ import com.example.googleplay.utils.UIUtils;
 import com.lidroid.xutils.BitmapUtils;
 
 /**
- * 首页的Holder
+ * 应用的Holder
  * @author Administrator
  *
  */
-public class HomeHolder extends BaseHolder<AppInfo> {
+public class AppHolder extends BaseHolder<AppInfo> {
 
 	private TextView tvName,tvSize,tvDes;
 	private ImageView ivIcon;

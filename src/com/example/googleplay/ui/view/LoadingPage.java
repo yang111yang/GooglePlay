@@ -1,13 +1,13 @@
 package com.example.googleplay.ui.view;
 
-import com.example.googleplay.R;
-import com.example.googleplay.utils.UIUtils;
-
 import android.content.Context;
-import android.provider.Contacts.Intents.UI;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
+
+import com.example.googleplay.R;
+import com.example.googleplay.utils.UIUtils;
 
 /**
  * 根据当前控件的状态来动态的现实当前页面的布局 - 未加载 - 加载中 - 加载失败 - 数据为空 - 加载成功
@@ -54,6 +54,16 @@ public abstract class LoadingPage extends FrameLayout {
 		// 初始化加载失败的布局
 		if (mErrorPage == null) {
 			mErrorPage = UIUtils.inflate(R.layout.page_error);
+			// 加载失败，点击重试
+			Button btnRetry = (Button) mErrorPage.findViewById(R.id.btn_retry);
+			btnRetry.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// 请求网络数据
+					loadData();
+				}
+			});
 			addView(mErrorPage);
 		}
 

@@ -11,14 +11,15 @@
         android:src="@drawable/ic_error_page" />
 
     <Button
+        android:id="@+id/btn_retry"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="加载失败,请重试"
-        android:textSize="20sp"
         android:textColor="#000"
-        style="?android:attr/borderlessButtonStyle" />
+        android:textSize="20sp" />
 
 </LinearLayout>

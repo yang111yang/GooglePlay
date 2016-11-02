@@ -27,7 +27,6 @@ public class HomeFragment extends BaseFragment {
 //		TextView textView = new TextView(UIUtils.getContext());
 //		textView.setText(getClass().getSimpleName());
 		MyListView view = new MyListView(UIUtils.getContext());
-		
 		view.setAdapter(new HomeAdapter(data));
 		return view;
 	}

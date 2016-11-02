@@ -1,8 +1,10 @@
 package com.example.googleplay.ui.fragment;
 
 import com.example.googleplay.ui.view.LoadingPage.ResultState;
+import com.example.googleplay.utils.UIUtils;
 
 import android.view.View;
+import android.widget.TextView;
 
 
 /**
@@ -14,12 +16,14 @@ public class GameFragment extends BaseFragment {
 
 	@Override
 	public View onCreateSuccessView() {
-		return null;
+		TextView view = new TextView(UIUtils.getContext());
+		view.setText("GameFragment");
+		return view;
 	}
 
 	@Override
 	public ResultState onLoad() {
-		return ResultState.STATE_EMPTY;
+		return ResultState.STATE_SUCCESS;
 	}
 	
 	
