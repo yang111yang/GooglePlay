@@ -45,6 +45,18 @@ public class CategoryFragment extends BaseFragment {
 		}
 		
 		@Override
+		public BaseHolder<CategoryInfo> getHolder(int position) {
+			// 判断是否是标题类型还是普通的分类类型，来返回不同的holder
+			if (data.get(position).isTitle) {
+				// 返回标题类型
+				return new TitleHolder();
+			} else {
+				// 返回普通分类类型
+				return new CategoryHolder();
+			}
+		}
+		
+		@Override
 		public boolean hasMore() {
 			return false;
 		}
@@ -67,17 +79,6 @@ public class CategoryFragment extends BaseFragment {
 			
 		}
 
-		@Override
-		public BaseHolder<CategoryInfo> getHolder(int position) {
-			// 判断是否是标题类型还是普通的分类类型，来返回不同的holder
-			if (data.get(position).isTitle) {
-				// 返回标题类型
-				return new TitleHolder();
-			} else {
-				// 返回普通分类类型
-				return new CategoryHolder();
-			}
-		}
 		
 		@Override
 		public ArrayList<CategoryInfo> onLoadMore() {

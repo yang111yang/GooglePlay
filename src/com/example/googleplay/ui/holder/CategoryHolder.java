@@ -44,12 +44,14 @@ public class CategoryHolder extends BaseHolder<CategoryInfo> implements OnClickL
 
 	@Override
 	public void refreshView(CategoryInfo data) {
-		tvName1.setText(data.name1);
-		tvName2.setText(data.name2);
-		tvName3.setText(data.name3);
-		mBitmapUtils.display(ivIcon1, HttpHelper.URL + "image?name=" + data.url1);
-		mBitmapUtils.display(ivIcon2, HttpHelper.URL + "image?name=" + data.url2);
-		mBitmapUtils.display(ivIcon3, HttpHelper.URL + "image?name=" + data.url3);
+		if (data != null) {
+			tvName1.setText(data.name1);
+			tvName2.setText(data.name2);
+			tvName3.setText(data.name3);
+			mBitmapUtils.display(ivIcon1, HttpHelper.URL + "image?name=" + data.url1);
+			mBitmapUtils.display(ivIcon2, HttpHelper.URL + "image?name=" + data.url2);
+			mBitmapUtils.display(ivIcon3, HttpHelper.URL + "image?name=" + data.url3);
+		}
 	}
 
 	@Override
