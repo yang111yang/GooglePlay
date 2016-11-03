@@ -14,6 +14,11 @@ import com.example.googleplay.utils.BitmapHelper;
 import com.example.googleplay.utils.UIUtils;
 import com.lidroid.xutils.BitmapUtils;
 
+/**
+ * 分类的holder
+ * @author Administrator
+ *
+ */
 public class CategoryHolder extends BaseHolder<CategoryInfo> implements OnClickListener {
 
 	private TextView tvName1,tvName2,tvName3;

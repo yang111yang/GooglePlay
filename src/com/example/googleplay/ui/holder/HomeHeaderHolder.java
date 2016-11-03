@@ -138,7 +138,6 @@ public class HomeHeaderHolder extends BaseHolder<ArrayList<String>> {
 		public void run() {
 			int currentItem = mViewPager.getCurrentItem();
 			currentItem++;
-			LogUtils.i("currentItem = " + currentItem);
 			mViewPager.setCurrentItem(currentItem);
 			
 			// 继续发送延时消息，实现内循环

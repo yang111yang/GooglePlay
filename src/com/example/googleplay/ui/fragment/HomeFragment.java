@@ -2,10 +2,14 @@ package com.example.googleplay.ui.fragment;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.example.googleplay.domain.AppInfo;
 import com.example.googleplay.http.protocol.HomeProtocol;
+import com.example.googleplay.ui.activity.HomeDetailActivity;
 import com.example.googleplay.ui.adapter.MyBaseAdapter;
 import com.example.googleplay.ui.holder.BaseHolder;
 import com.example.googleplay.ui.holder.HomeHeaderHolder;
@@ -38,6 +42,20 @@ public class HomeFragment extends BaseFragment {
 		if (mPictureList != null) {
 			header.setData(mPictureList);
 		}
+		
+		view.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// 跳转到应用详情页
+				Intent intent = new Intent(UIUtils.getContext(),HomeDetailActivity.class);
+				AppInfo appInfo = data.get(position - 1);
+				intent.putExtra("packageName", appInfo.packageName);
+				startActivity(intent);
+			}
+		});
+		
 		return view;
 	}
 

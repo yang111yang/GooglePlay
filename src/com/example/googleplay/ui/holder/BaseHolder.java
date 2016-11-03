@@ -2,6 +2,11 @@ package com.example.googleplay.ui.holder;
 
 import android.view.View;
 
+/**
+ * holder基类
+ * @author Administrator
+ * @param <T>
+ */
 public abstract class BaseHolder<T> {
 
 	private View mRootView;

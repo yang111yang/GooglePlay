@@ -47,7 +47,7 @@ public class CategoryFragment extends BaseFragment {
 		@Override
 		public BaseHolder<CategoryInfo> getHolder(int position) {
 			// 判断是否是标题类型还是普通的分类类型，来返回不同的holder
-			if (data.get(position).isTitle) {
+			if (getItem(position).isTitle) {
 				// 返回标题类型
 				return new TitleHolder();
 			} else {
@@ -69,7 +69,7 @@ public class CategoryFragment extends BaseFragment {
 		@Override
 		public int getInnerType(int position) {
 			// 判断是否是标题类型还是普通的分类类型
-			if (data.get(position).isTitle) {
+			if (getItem(position).isTitle) {
 				// 返回标题类型
 				return super.getInnerType(position) + 1; // 在原来的基础上增加一种标题类型
 			} else {

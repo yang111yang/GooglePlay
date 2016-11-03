@@ -98,7 +98,9 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
 		} else {
 			// 加载更多布局
 			MoreHolder moreHolder = (MoreHolder) holder;
-			loadMore(moreHolder);
+			if (moreHolder.getData() == MoreHolder.STATE_MORE_MORE) { // 加载之前必须要判断是否有更多数据
+				loadMore(moreHolder);
+			}
 		}
 		return holder.getRootView();
 	}
