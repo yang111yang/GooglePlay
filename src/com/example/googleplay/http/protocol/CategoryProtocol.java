@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.googleplay.domain.CategoryInfo;
-import com.example.googleplay.utils.LogUtils;
 
 /**
  * 分类模块请求网络

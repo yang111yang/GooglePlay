@@ -1,20 +1,23 @@
 package com.example.googleplay.ui.activity;
 
+import android.app.ActionBar;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+
 import com.example.googleplay.R;
 import com.example.googleplay.domain.AppInfo;
 import com.example.googleplay.http.protocol.HomeDetailProtocol;
 import com.example.googleplay.ui.holder.DetailAppInfoHolder;
 import com.example.googleplay.ui.holder.DetailDesInfoHolder;
+import com.example.googleplay.ui.holder.DetailDownloadHolder;
 import com.example.googleplay.ui.holder.DetailPicsInfoHolder;
 import com.example.googleplay.ui.holder.DetailSafeInfoHolder;
 import com.example.googleplay.ui.view.LoadingPage;
 import com.example.googleplay.ui.view.LoadingPage.ResultState;
 import com.example.googleplay.utils.UIUtils;
-
-import android.os.Bundle;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 
 /**
  * 首页应用详情页
@@ -24,11 +27,11 @@ import android.widget.HorizontalScrollView;
 public class HomeDetailActivity extends BaseActivity {
 
 	private String packageName;
-	private FrameLayout flDetailAppInfo, flDetailSafeInfo;
+	private FrameLayout flDetailAppInfo, flDetailSafeInfo, flDetailDes,
+			flDetailDownload;
 	private AppInfo data;
 	private LoadingPage mLoadingPage;
 	private HorizontalScrollView hsvDetailPic;
-	private FrameLayout flDetailDes;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,28 @@ public class HomeDetailActivity extends BaseActivity {
 		packageName = getIntent().getStringExtra("packageName");
 		// 开始加载网络数据
 		mLoadingPage.loadData();
+
+		initActionBar();
+	}
+
+	public void initActionBar() {
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true); // 显示左上角返回键，当和侧边栏结合时展示三个杠的图片
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			// 关闭当前页面
+			finish();
+			break;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	public View onCreateSuccessView() {
@@ -63,30 +88,37 @@ public class HomeDetailActivity extends BaseActivity {
 		flDetailAppInfo = (FrameLayout) view
 				.findViewById(R.id.fl_detail_appinfo);
 		// 动态给帧布局填充页面
-		DetailAppInfoHolder detailAppInfoHolder = new DetailAppInfoHolder();
-		flDetailAppInfo.addView(detailAppInfoHolder.getRootView());
-		detailAppInfoHolder.setData(data);
+		DetailAppInfoHolder appInfoHolder = new DetailAppInfoHolder();
+		flDetailAppInfo.addView(appInfoHolder.getRootView());
+		appInfoHolder.setData(data);
 
 		// 初始化安全信息描述模块
 		flDetailSafeInfo = (FrameLayout) view
 				.findViewById(R.id.fl_detail_safeinfo);
+		DetailSafeInfoHolder safeInfoHolder = new DetailSafeInfoHolder();
+		flDetailSafeInfo.addView(safeInfoHolder.getRootView());
+		safeInfoHolder.setData(data);
 
-		DetailSafeInfoHolder detailSafeInfoHolder = new DetailSafeInfoHolder();
-		flDetailSafeInfo.addView(detailSafeInfoHolder.getRootView());
-		detailSafeInfoHolder.setData(data);
-		
 		// 初始化截图模块
-		hsvDetailPic = (HorizontalScrollView) view.findViewById(R.id.hsv_detail_pic);
-		DetailPicsInfoHolder detailPicsInfoHolder = new DetailPicsInfoHolder();
-		hsvDetailPic.addView(detailPicsInfoHolder.getRootView());
-		detailPicsInfoHolder.setData(data);
-		
+		hsvDetailPic = (HorizontalScrollView) view
+				.findViewById(R.id.hsv_detail_pic);
+		DetailPicsInfoHolder picsInfoHolder = new DetailPicsInfoHolder();
+		hsvDetailPic.addView(picsInfoHolder.getRootView());
+		picsInfoHolder.setData(data);
+
 		// 初始化应用介绍模块
 		flDetailDes = (FrameLayout) view.findViewById(R.id.fl_detail_des);
-		DetailDesInfoHolder detailDesInfoHolder = new DetailDesInfoHolder();
-		flDetailDes.addView(detailDesInfoHolder.getRootView());
-		detailDesInfoHolder.setData(data);
-		
+		DetailDesInfoHolder desInfoHolder = new DetailDesInfoHolder();
+		flDetailDes.addView(desInfoHolder.getRootView());
+		desInfoHolder.setData(data);
+
+		// 初始化下载模块
+		flDetailDownload = (FrameLayout) view
+				.findViewById(R.id.fl_detail_download);
+		DetailDownloadHolder downloadHolder = new DetailDownloadHolder();
+		flDetailDownload.addView(downloadHolder.getRootView());
+		downloadHolder.setData(data);
+
 		return view;
 	}
 

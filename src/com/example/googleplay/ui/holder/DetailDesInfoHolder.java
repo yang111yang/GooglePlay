@@ -59,9 +59,16 @@ public class DetailDesInfoHolder extends BaseHolder<AppInfo> {
 		tvDes.setText(data.des);
 		tvAuthor.setText(data.author);
 
-		params = (LayoutParams) tvDes.getLayoutParams();
-		params.height = getShortHeight();
-		tvDes.setLayoutParams(params);
+		// 放在消息队列中，解决当只有3行描述时也是7行高度的bug
+		tvDes.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				params = (LayoutParams) tvDes.getLayoutParams();
+				params.height = getShortHeight();
+				tvDes.setLayoutParams(params);
+			}
+		});
 	}
 
 	private boolean isOpen = false;// 标记安全描述开关状态，默认关闭

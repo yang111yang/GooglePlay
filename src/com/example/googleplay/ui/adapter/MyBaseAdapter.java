@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
+import com.example.googleplay.manager.ThreadManager;
 import com.example.googleplay.ui.holder.BaseHolder;
 import com.example.googleplay.ui.holder.MoreHolder;
 import com.example.googleplay.utils.UIUtils;
@@ -132,7 +133,42 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
 	public void loadMore(final MoreHolder holder) {
 		if (!isLoadMore) {
 			isLoadMore = true;
-			new Thread() {
+//			new Thread() {
+//				public void run() {
+//					final ArrayList<T> moreData = onLoadMore();
+//					UIUtils.runOnUIThread(new Runnable() {
+//
+//						@Override
+//						public void run() {
+//							if (moreData != null) {
+//								// 默认每页有 20条数据，如果少于20条，则没有更多数据了，到最后一页了
+//								if (moreData.size() < 20) {
+//									holder.setData(MoreHolder.STATE_MORE_NONE);
+//									Toast.makeText(UIUtils.getContext(),
+//											"没有更多数据了", Toast.LENGTH_SHORT)
+//											.show();
+//								} else {
+//									// 有更多数据
+//									holder.setData(MoreHolder.STATE_MORE_MORE);
+//								}
+//								// 将更多数据追加到当前集合中
+//								data.addAll(moreData);
+//								// 刷新界面
+//								MyBaseAdapter.this.notifyDataSetChanged();
+//							} else {
+//								// 加载更多数据失败
+//								holder.setData(MoreHolder.STATE_MORE_ERROR);
+//							}
+//							isLoadMore = false;
+//						}
+//					});
+//
+//				};
+//			}.start();
+			
+			ThreadManager.getThreadPool().excute(new Runnable() {
+				
+				@Override
 				public void run() {
 					final ArrayList<T> moreData = onLoadMore();
 					UIUtils.runOnUIThread(new Runnable() {
@@ -161,9 +197,9 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
 							isLoadMore = false;
 						}
 					});
-
-				};
-			}.start();
+				}
+			});
+			
 		}
 	}
 

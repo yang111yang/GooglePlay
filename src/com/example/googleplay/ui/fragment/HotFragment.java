@@ -3,14 +3,7 @@ package com.example.googleplay.ui.fragment;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.example.googleplay.http.protocol.HotProtocol;
-import com.example.googleplay.ui.view.FlowLayout;
-import com.example.googleplay.ui.view.LoadingPage.ResultState;
-import com.example.googleplay.utils.DrawableUtils;
-import com.example.googleplay.utils.UIUtils;
-
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -19,6 +12,12 @@ import android.view.View.OnClickListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.googleplay.http.protocol.HotProtocol;
+import com.example.googleplay.ui.view.LoadingPage.ResultState;
+import com.example.googleplay.ui.view.MyFlowLayout;
+import com.example.googleplay.utils.DrawableUtils;
+import com.example.googleplay.utils.UIUtils;
 
 
 /**
@@ -33,11 +32,12 @@ public class HotFragment extends BaseFragment {
 	@Override
 	public View onCreateSuccessView() {
 		ScrollView scrollView = new ScrollView(UIUtils.getContext());
-		FlowLayout flowLayout = new FlowLayout(UIUtils.getContext());
+//		FlowLayout flowLayout = new FlowLayout(UIUtils.getContext());
+		MyFlowLayout flowLayout = new MyFlowLayout(UIUtils.getContext());
 		int padding = UIUtils.dip2px(10);
 		flowLayout.setPadding(padding, padding, padding, padding);
-		flowLayout.setHorizontalSpacing(UIUtils.dip2px(6));  // 水平间距
-		flowLayout.setVerticalSpacing(UIUtils.dip2px(8)); // 竖直间距
+//		flowLayout.setHorizontalSpacing(UIUtils.dip2px(6));  // 水平间距
+//		flowLayout.setVerticalSpacing(UIUtils.dip2px(8)); // 竖直间距
 		
 		for (int i = 0; i < data.size(); i++) {
 			final String keyword = data.get(i);
