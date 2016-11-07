@@ -32,5 +32,12 @@
         android:background="@drawable/progress_btn_normal"
         android:text="下载"
         android:textColor="#fff" />
+    <FrameLayout
+        android:id="@+id/fl_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:layout_margin="2dp"
+        android:layout_toLeftOf="@id/btn_share"
+        android:layout_toRightOf="@id/btn_fav" />
 
 </RelativeLayout>

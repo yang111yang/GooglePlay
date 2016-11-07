@@ -1,11 +1,10 @@
 package com.example.googleplay.manager;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -28,7 +27,7 @@ public class DownloadManager {
 
 	public static final int STATE_UNDO = 0; // 未下载
 
-	public static final int STATE_WATING = 1; // 等待下载
+	public static final int STATE_WAITING = 1; // 等待下载
 
 	public static final int STATE_DOWNLOAD = 2; // 正在下载
 
@@ -41,11 +40,11 @@ public class DownloadManager {
 	/** 观察者集合 */
 	private ArrayList<DownloadObserver> mObservers = new ArrayList<DownloadObserver>();
 
-	/** 下载对象集合 */
-	private HashMap<String, DownloadInfo> mDownloadInfoMap = new HashMap<String, DownloadInfo>();
+	/** 下载对象集合，为了解决线程安全问题，要使用ConcurrentHashMap */
+	private ConcurrentHashMap<String, DownloadInfo> mDownloadInfoMap = new ConcurrentHashMap<String, DownloadInfo>();
 
 	/** 下载任务集合 */
-	private HashMap<String, DownloadTask> mDownloadTaskMap = new HashMap<String, DownloadTask>();
+	private ConcurrentHashMap<String, DownloadTask> mDownloadTaskMap = new ConcurrentHashMap<String, DownloadTask>();
 
 	private static DownloadManager sInstance = new DownloadManager();
 
@@ -54,6 +53,13 @@ public class DownloadManager {
 
 	public static DownloadManager getInstance() {
 		return sInstance;
+	}
+
+	/**
+	 * 获取DownloadInfo
+	 */
+	public DownloadInfo getDownloadInfo(AppInfo info) {
+		return mDownloadInfoMap.get(info.id);
 	}
 
 	/**
@@ -93,9 +99,9 @@ public class DownloadManager {
 	}
 
 	/**
-	 * 下载apk
+	 * 下载apk 为了解决线程安全问题，在下载，暂停，安装三个方法中加上synchronized关键字
 	 */
-	public void download(AppInfo appInfo) {
+	public synchronized void download(AppInfo appInfo) {
 
 		if (appInfo != null) {
 			DownloadInfo downloadInfo = mDownloadInfoMap.get(appInfo.id);
@@ -106,17 +112,17 @@ public class DownloadManager {
 			}
 
 			// 将下载状态更新为等待下载
-			downloadInfo.currentState = STATE_WATING;
+			downloadInfo.currentState = STATE_WAITING;
 			// 通知状态发生变化，各观察者根据此通知更新主界面
 			notifyDownloadStateChanged(downloadInfo);
 			// 将下载的对象保存到集合中
-			mDownloadInfoMap.put(downloadInfo.id, downloadInfo);
+			mDownloadInfoMap.put(appInfo.id, downloadInfo);
 			// 初始化下载任务
 			DownloadTask task = new DownloadTask(downloadInfo);
 			// 启动下载任务
 			ThreadManager.getThreadPool().excute(task);
 			// 将下载任务维护到集合中
-			mDownloadTaskMap.put(downloadInfo.id, task);
+			mDownloadTaskMap.put(appInfo.id, task);
 		}
 
 	}
@@ -124,7 +130,7 @@ public class DownloadManager {
 	/**
 	 * 暂停下载
 	 */
-	public void pause(AppInfo appInfo) {
+	public synchronized void pause(AppInfo appInfo) {
 
 		if (appInfo != null) {
 			DownloadInfo downloadInfo = mDownloadInfoMap.get(appInfo.id);
@@ -133,18 +139,17 @@ public class DownloadManager {
 				// 获取downloadInfo的状态
 				int state = downloadInfo.currentState;
 				// 判断state,如果当前状态是正在下载或者等待下载，才暂停下载
-				if (state == STATE_DOWNLOAD || state == STATE_WATING) {
+				if (state == STATE_DOWNLOAD || state == STATE_WAITING) {
 					// 停止当前的下载任务
 					DownloadTask task = mDownloadTaskMap.get(downloadInfo.id);
 					if (task != null) {
 						ThreadManager.getThreadPool().cancel(task);
 					}
+					// 将下载状态更新为暂停下载
+					downloadInfo.currentState = STATE_PAUSE;
+					// 通知状态发生变化，各观察者根据此通知更新主界面
+					notifyDownloadStateChanged(downloadInfo);
 				}
-
-				// 将下载状态更新为暂停下载
-				downloadInfo.currentState = STATE_PAUSE;
-				// 通知状态发生变化，各观察者根据此通知更新主界面
-				notifyDownloadStateChanged(downloadInfo);
 
 			}
 
@@ -154,7 +159,7 @@ public class DownloadManager {
 	/**
 	 * 安装apk
 	 */
-	public void install(AppInfo appInfo) {
+	public synchronized void install(AppInfo appInfo) {
 		DownloadInfo downloadInfo = mDownloadInfoMap.get(appInfo.id);
 		if (downloadInfo != null) {
 			// 跳到系统的安装页面进行安装
@@ -186,6 +191,7 @@ public class DownloadManager {
 	class DownloadTask implements Runnable {
 
 		private DownloadInfo downloadInfo;
+		private HttpResult httpResult;
 
 		private DownloadTask(DownloadInfo info) {
 			this.downloadInfo = info;
@@ -196,12 +202,11 @@ public class DownloadManager {
 		public void run() {
 			LogUtils.i("开始下载啦");
 			// 将下载状态更新为暂停下载
-			downloadInfo.currentState = STATE_PAUSE;
+			downloadInfo.currentState = STATE_DOWNLOAD;
 			// 通知状态发生变化，各观察者根据此通知更新主界面
 			notifyDownloadStateChanged(downloadInfo);
 
 			File file = new File(downloadInfo.path);
-			HttpResult httpResult;
 			if (!file.exists() || file.length() != downloadInfo.currentPos
 					|| downloadInfo.currentPos == 0) {// 文件不存在，文件长度与对象的长度不一致，或者对象的当前位置为0
 				// 需要从头开始下载
@@ -216,31 +221,58 @@ public class DownloadManager {
 						+ "download?name=" + downloadInfo.downloadUrl
 						+ "&range=" + file.length());
 			}
-			
+
 			InputStream in = null;
 			FileOutputStream out = null;
-			if (httpResult != null && (in  = httpResult.getInputStream()) != null) {
+			if (httpResult != null
+					&& (in = httpResult.getInputStream()) != null) {
 				try {
 					out = new FileOutputStream(file, true);// 在原有的文件的基础上追加
-					
+
 					int len = 0;
-					byte[] buffer = new byte[1024];
-					while ((len = in.read(buffer)) != -1 && downloadInfo.currentState == STATE_DOWNLOAD) {
-						out.write(buffer);
+					byte[] buffer = new byte[1024 * 4];
+					while ((len = in.read(buffer)) != -1
+							&& downloadInfo.currentState == STATE_DOWNLOAD) {// 只有在下载状态才读取文件，如果状态变化，就立即停止读写文件
+						out.write(buffer, 0, len);
 						out.flush();
-						
+
 						downloadInfo.currentPos += len; // 更新当前下载位置
 						notifyDownloadProgressChanged(downloadInfo);// 通知进度更新
 					}
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 					IOUtils.close(in);
 					IOUtils.close(out);
 				}
+
+				// 下载结束，判断文件的完整性
+				if (file.length() == downloadInfo.size) {
+					// 下载文件完整
+					downloadInfo.currentState = STATE_SUCCESS;
+					notifyDownloadStateChanged(downloadInfo);
+				} else if (downloadInfo.currentState == STATE_PAUSE) {
+					// 下载暂停
+					notifyDownloadStateChanged(downloadInfo);
+				} else {
+					// 下载失败
+					file.delete(); // 移除无效文件
+					downloadInfo.currentState = STATE_PAUSE;
+					downloadInfo.currentPos = 0; // 文件位置清零
+					notifyDownloadStateChanged(downloadInfo);
+				}
+
+			} else {
+				// 网络异常
+				file.delete(); // 移除无效文件
+				downloadInfo.currentState = STATE_ERROR;
+				downloadInfo.currentPos = 0; // 文件位置清零
+				notifyDownloadStateChanged(downloadInfo);
 			}
-			
+
+			// 不管下载失败，还是暂停，还是成功，下载任务已经结束，都需要从集合中移除
+			mDownloadTaskMap.remove(downloadInfo.id);
 
 		}
 
